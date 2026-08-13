@@ -63,43 +63,47 @@ export default function BillingPage() {
   const collected = invoices.filter((i) => i.status === 'PAID').reduce((sum, i) => sum + i.amount, 0)
   const outstanding = invoices.filter((i) => i.status === 'PENDING' || i.status === 'OVERDUE').reduce((sum, i) => sum + i.amount, 0)
 
+  const totals = [
+    { label: filter === 'ALL' ? 'Total (all)' : `Total (${filter.toLowerCase()})`, value: `$${total.toFixed(2)}`, accent: 'from-teal-400/25 to-cyan-400/10', text: 'text-white' },
+    { label: 'Collected', value: `$${collected.toFixed(2)}`, accent: 'from-emerald-400/25 to-teal-400/10', text: 'text-emerald-300' },
+    { label: 'Outstanding', value: `$${outstanding.toFixed(2)}`, accent: 'from-amber-400/25 to-orange-400/10', text: 'text-amber-300' },
+  ]
+
   return (
     <div>
       <PageHeader
-        title="Billing"
+        title="Billing & Payments"
         subtitle={`${invoices.length} invoices · $${collected.toFixed(2)} collected`}
         action={
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
-          >
+          <button onClick={() => setOpen(true)} className="btn-primary">
             + New invoice
           </button>
         }
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-gray-200 bg-white p-4">
-          <p className="text-sm text-gray-500">Total ({filter === 'ALL' ? 'all' : filter.toLowerCase()})</p>
-          <p className="text-2xl font-bold text-gray-900">${total.toFixed(2)}</p>
-        </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-4">
-          <p className="text-sm text-gray-500">Collected</p>
-          <p className="text-2xl font-bold text-emerald-600">${collected.toFixed(2)}</p>
-        </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-4">
-          <p className="text-sm text-gray-500">Outstanding</p>
-          <p className="text-2xl font-bold text-amber-600">${outstanding.toFixed(2)}</p>
-        </div>
+        {totals.map((t, i) => (
+          <div
+            key={t.label}
+            className={`glass-card glass-card-hover animate-fade-up relative overflow-hidden rounded-2xl p-4`}
+            style={{ animationDelay: `${i * 0.08}s` }}
+          >
+            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${t.accent} opacity-50`} aria-hidden />
+            <p className="relative text-xs uppercase tracking-wider text-slate-400">{t.label}</p>
+            <p className={`relative font-display text-2xl font-bold ${t.text}`}>{t.value}</p>
+          </div>
+        ))}
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex animate-fade-up flex-wrap gap-2">
         {['ALL', ...statuses].map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
-              filter === s ? 'bg-teal-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+              filter === s
+                ? 'bg-gradient-to-r from-teal-400 to-cyan-500 text-[#03131a] shadow-[0_0_16px_rgba(45,212,191,0.4)]'
+                : 'border border-white/10 bg-white/[0.03] text-slate-400 hover:border-teal-400/30 hover:text-slate-200'
             }`}
           >
             {s === 'ALL' ? 'All' : s.toLowerCase()}
@@ -107,35 +111,44 @@ export default function BillingPage() {
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-gray-500">
+      <div className="fut-table animate-fade-up">
+        <table>
+          <thead>
             <tr>
-              <th className="px-4 py-3 font-medium">Patient</th>
-              <th className="px-4 py-3 font-medium">Items</th>
-              <th className="px-4 py-3 font-medium">Doctor</th>
-              <th className="px-4 py-3 font-medium">Amount</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Date</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
+              <th>Patient</th>
+              <th>Items</th>
+              <th>Doctor</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/5">
             {filtered.map((inv) => (
-              <tr key={inv.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-900">{inv.patient.name}</td>
-                <td className="max-w-xs truncate px-4 py-3 text-gray-600">{inv.items}</td>
-                <td className="px-4 py-3 text-gray-600">{inv.appointment?.doctor.user.name ?? '—'}</td>
-                <td className="px-4 py-3 font-semibold text-gray-900">${inv.amount.toFixed(2)}</td>
-                <td className="px-4 py-3">
+              <tr key={inv.id}>
+                <td>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-400/25 to-orange-400/15 text-xs font-bold text-amber-200">
+                      {inv.patient.name.charAt(0)}
+                    </div>
+                    <span className="font-medium text-slate-100">{inv.patient.name}</span>
+                  </div>
+                </td>
+                <td className="max-w-xs truncate">{inv.items}</td>
+                <td>{inv.appointment?.doctor.user.name ?? '—'}</td>
+                <td>
+                  <span className="font-display font-bold text-white">${inv.amount.toFixed(2)}</span>
+                </td>
+                <td>
                   <StatusBadge status={inv.status} />
                 </td>
-                <td className="px-4 py-3 text-gray-500">{new Date(inv.createdAt).toLocaleDateString()}</td>
-                <td className="px-4 py-3">
+                <td>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                <td>
                   <select
                     value={inv.status}
                     onChange={(e) => updateStatus(inv.id, e.target.value)}
-                    className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs focus:border-teal-500 focus:outline-none"
+                    className="fut-select"
                   >
                     {statuses.map((s) => (
                       <option key={s} value={s}>
@@ -148,7 +161,7 @@ export default function BillingPage() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={7} className="py-10 text-center text-slate-500">
                   No invoices found.
                 </td>
               </tr>

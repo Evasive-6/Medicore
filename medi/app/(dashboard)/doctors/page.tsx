@@ -34,13 +34,10 @@ export default function DoctorsPage() {
   return (
     <div>
       <PageHeader
-        title="Doctors"
+        title="Medical Staff"
         subtitle={`${doctors.length} doctors on staff`}
         action={
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
-          >
+          <button onClick={() => setOpen(true)} className="btn-primary">
             + Add doctor
           </button>
         }
@@ -50,40 +47,43 @@ export default function DoctorsPage() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search doctors…"
-        className="mb-4 w-full max-w-sm rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+        className="input mb-4 w-full max-w-sm"
       />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {filtered.map((d) => (
-          <div key={d.id} className="rounded-2xl border border-gray-200 bg-white p-5">
+        {filtered.map((d, i) => (
+          <div
+            key={d.id}
+            className="glass-card glass-card-hover animate-fade-up relative overflow-hidden rounded-2xl p-5"
+            style={{ animationDelay: `${i * 0.06}s` }}
+          >
+            <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gradient-to-br from-teal-400/15 to-cyan-400/5 blur-2xl" aria-hidden />
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-teal-100 text-sm font-bold text-teal-700">
+              <div className="animate-gradient flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-sm font-bold text-[#03131a] shadow-[0_0_20px_rgba(45,212,191,0.3)]">
                 {d.user.name.replace('Dr. ', '').split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               <div>
-                <p className="font-semibold text-gray-900">{d.user.name}</p>
-                <p className="text-xs text-gray-500">{d.user.email}</p>
+                <p className="font-display font-semibold text-white">{d.user.name}</p>
+                <p className="text-xs text-slate-400">{d.user.email}</p>
               </div>
             </div>
-            <p className="text-sm font-medium text-teal-700">{d.specialization}</p>
-            <div className="mt-3 flex items-center justify-between text-sm text-gray-500">
-              <span>{d.experienceYears} yrs exp</span>
-              <span>${d.fee.toFixed(2)} / visit</span>
+            <p className="inline-block rounded-full border border-teal-400/25 bg-teal-400/10 px-2.5 py-0.5 text-xs font-medium text-teal-300">
+              {d.specialization}
+            </p>
+            <div className="mt-3 flex items-center justify-between text-sm text-slate-400">
+              <span>{d.experienceYears} yrs experience</span>
+              <span className="font-display font-semibold text-white">${d.fee.toFixed(2)} / visit</span>
             </div>
-            <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
-              <span className="text-xs text-gray-400">{d.phone}</span>
-              <span
-                className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  d.available ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                }`}
-              >
+            <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-3">
+              <span className="font-mono text-xs text-slate-500">{d.phone}</span>
+              <span className={`chip ${d.available ? 'chip-emerald' : 'chip-red'}`}>
                 {d.available ? 'Available' : 'Unavailable'}
               </span>
             </div>
           </div>
         ))}
         {filtered.length === 0 && (
-          <p className="col-span-full py-10 text-center text-gray-400">No doctors found.</p>
+          <p className="col-span-full py-10 text-center text-slate-500">No doctors found.</p>
         )}
       </div>
 

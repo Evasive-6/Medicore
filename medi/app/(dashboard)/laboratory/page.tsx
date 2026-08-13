@@ -82,52 +82,56 @@ export default function LaboratoryPage() {
         title="Laboratory"
         subtitle={`${orders.length} lab orders`}
         action={
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
-          >
+          <button onClick={() => setOpen(true)} className="btn-primary">
             + New lab order
           </button>
         }
       />
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-gray-500">
+      <div className="fut-table animate-fade-up">
+        <table>
+          <thead>
             <tr>
-              <th className="px-4 py-3 font-medium">Patient</th>
-              <th className="px-4 py-3 font-medium">Test</th>
-              <th className="px-4 py-3 font-medium">Ordered By</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Result</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
+              <th>Patient</th>
+              <th>Test</th>
+              <th>Ordered By</th>
+              <th>Status</th>
+              <th>Result</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/5">
             {orders.map((o) => (
-              <tr key={o.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-900">{o.patient.name}</td>
-                <td className="px-4 py-3">
-                  <p className="text-gray-900">{o.test.name}</p>
-                  <p className="text-xs text-gray-400">{o.test.category}</p>
+              <tr key={o.id}>
+                <td>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-400/30 to-fuchsia-400/15 text-xs font-bold text-violet-200">
+                      {o.patient.name.charAt(0)}
+                    </div>
+                    <span className="font-medium text-slate-100">{o.patient.name}</span>
+                  </div>
                 </td>
-                <td className="px-4 py-3 text-gray-600">{o.doctor?.user.name ?? '—'}</td>
-                <td className="px-4 py-3">
+                <td>
+                  <p className="text-slate-100">{o.test.name}</p>
+                  <p className="text-xs text-slate-500">{o.test.category}</p>
+                </td>
+                <td>{o.doctor?.user.name ?? '—'}</td>
+                <td>
                   <StatusBadge status={o.status} />
                 </td>
-                <td className="max-w-xs px-4 py-3">
+                <td className="max-w-xs">
                   {o.result ? (
-                    <p className="truncate text-gray-600">{o.result}</p>
+                    <p className="truncate text-slate-300">{o.result}</p>
                   ) : (
-                    <span className="text-gray-300">—</span>
+                    <span className="text-slate-600">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td>
                   <div className="flex items-center gap-2">
                     <select
                       value={o.status}
                       onChange={(e) => updateStatus(o.id, e.target.value)}
-                      className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs focus:border-teal-500 focus:outline-none"
+                      className="fut-select"
                     >
                       {statuses.map((s) => (
                         <option key={s} value={s}>
@@ -140,7 +144,7 @@ export default function LaboratoryPage() {
                         setResultFor(o)
                         setResultText(o.result ?? '')
                       }}
-                      className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                      className="btn-ghost px-3 py-1 text-xs"
                     >
                       Result
                     </button>
@@ -150,7 +154,7 @@ export default function LaboratoryPage() {
             ))}
             {orders.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={6} className="py-10 text-center text-slate-500">
                   No lab orders yet.
                 </td>
               </tr>
@@ -159,13 +163,15 @@ export default function LaboratoryPage() {
         </table>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5">
-        <h2 className="mb-4 font-semibold text-gray-900">Available Tests</h2>
+      <div className="mt-6 glass-card rounded-2xl p-5">
+        <h2 className="mb-4 font-display font-semibold text-white">Available Tests</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {tests.map((t) => (
-            <div key={t.id} className="rounded-lg bg-gray-50 p-3">
-              <p className="text-sm font-medium text-gray-900">{t.name}</p>
-              <p className="text-xs text-gray-500">{t.category} · ${t.price.toFixed(2)}</p>
+            <div key={t.id} className="panel-row glass-card-hover p-3">
+              <p className="text-sm font-medium text-slate-100">{t.name}</p>
+              <p className="mt-0.5 text-xs text-slate-400">
+                {t.category} · <span className="font-semibold text-teal-300">${t.price.toFixed(2)}</span>
+              </p>
             </div>
           ))}
         </div>
@@ -178,8 +184,8 @@ export default function LaboratoryPage() {
       <Modal title="Enter test result" open={!!resultFor} onClose={() => setResultFor(null)}>
         <div className="space-y-4">
           {resultFor && (
-            <p className="text-sm text-gray-500">
-              {resultFor.test.name} · {resultFor.patient.name}
+            <p className="text-sm text-slate-400">
+              <span className="text-slate-200">{resultFor.test.name}</span> · {resultFor.patient.name}
             </p>
           )}
           <textarea
@@ -187,19 +193,13 @@ export default function LaboratoryPage() {
             onChange={(e) => setResultText(e.target.value)}
             rows={4}
             placeholder="Test findings, values, and interpretation…"
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+            className="input"
           />
           <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setResultFor(null)}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-            >
+            <button onClick={() => setResultFor(null)} className="btn-ghost">
               Cancel
             </button>
-            <button
-              onClick={saveResult}
-              className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
-            >
+            <button onClick={saveResult} className="btn-primary">
               Save result
             </button>
           </div>
