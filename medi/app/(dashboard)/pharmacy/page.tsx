@@ -58,13 +58,10 @@ export default function PharmacyPage() {
   return (
     <div>
       <PageHeader
-        title="Pharmacy"
-        subtitle={`${medicines.length} medicines in inventory · ${lowStockCount} low stock`}
+        title="Pharmacy Inventory"
+        subtitle={`${medicines.length} medicines · ${lowStockCount} low stock`}
         action={
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
-          >
+          <button onClick={() => setOpen(true)} className="btn-primary">
             + Add medicine
           </button>
         }
@@ -74,53 +71,56 @@ export default function PharmacyPage() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search medicines…"
-        className="mb-4 w-full max-w-sm rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+        className="input mb-4 w-full max-w-sm"
       />
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-gray-500">
+      <div className="fut-table">
+        <table>
+          <thead>
             <tr>
-              <th className="px-4 py-3 font-medium">Medicine</th>
-              <th className="px-4 py-3 font-medium">Category</th>
-              <th className="px-4 py-3 font-medium">Price</th>
-              <th className="px-4 py-3 font-medium">Stock</th>
-              <th className="px-4 py-3 font-medium">Expiry</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
+              <th>Medicine</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Expiry</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/5">
             {filtered.map((m) => (
-              <tr key={m.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  <p className="font-medium text-gray-900">{m.name}</p>
-                  {m.manufacturer && <p className="text-xs text-gray-400">{m.manufacturer}</p>}
+              <tr key={m.id}>
+                <td>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-lg">
+                      💊
+                    </div>
+                    <div>
+                      <p className="font-medium text-slate-100">{m.name}</p>
+                      {m.manufacturer && <p className="text-xs text-slate-500">{m.manufacturer}</p>}
+                    </div>
+                  </div>
                 </td>
-                <td className="px-4 py-3 text-gray-600">{m.category}</td>
-                <td className="px-4 py-3 text-gray-600">${m.price.toFixed(2)}</td>
-                <td className="px-4 py-3">
+                <td>{m.category}</td>
+                <td>
+                  <span className="font-display font-semibold text-white">${m.price.toFixed(2)}</span>
+                </td>
+                <td>
                   <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      m.stock < 50
-                        ? 'bg-red-100 text-red-700'
-                        : m.stock < 100
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-emerald-100 text-emerald-700'
+                    className={`chip ${
+                      m.stock < 50 ? 'chip-red' : m.stock < 100 ? 'chip-amber' : 'chip-emerald'
                     }`}
                   >
                     {m.stock} {m.unit}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-600">
-                  {m.expiryDate ? new Date(m.expiryDate).toLocaleDateString() : '—'}
-                </td>
-                <td className="px-4 py-3">
+                <td>{m.expiryDate ? new Date(m.expiryDate).toLocaleDateString() : '—'}</td>
+                <td>
                   <button
                     onClick={() => {
                       setAdjust(m)
                       setAdjustValue(m.stock)
                     }}
-                    className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    className="btn-ghost px-3 py-1 text-xs"
                   >
                     Adjust stock
                   </button>
@@ -129,7 +129,7 @@ export default function PharmacyPage() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={6} className="py-10 text-center text-slate-500">
                   No medicines found.
                 </td>
               </tr>
@@ -145,28 +145,22 @@ export default function PharmacyPage() {
       <Modal title={`Adjust stock — ${adjust?.name ?? ''}`} open={!!adjust} onClose={() => setAdjust(null)}>
         {adjust && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">
-              Current stock: <span className="font-semibold text-gray-900">{adjust.stock} {adjust.unit}</span>
+            <p className="text-sm text-slate-400">
+              Current stock: <span className="font-semibold text-white">{adjust.stock} {adjust.unit}</span>
             </p>
-            <label className="mb-1 block text-sm font-medium text-gray-700">New stock level</label>
+            <label className="input-label">New stock level</label>
             <input
               type="number"
               min="0"
               value={adjustValue}
               onChange={(e) => setAdjustValue(Number(e.target.value))}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+              className="input"
             />
             <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setAdjust(null)}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-              >
+              <button onClick={() => setAdjust(null)} className="btn-ghost">
                 Cancel
               </button>
-              <button
-                onClick={() => saveStock(adjust)}
-                className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
-              >
+              <button onClick={() => saveStock(adjust)} className="btn-primary">
                 Save
               </button>
             </div>

@@ -63,25 +63,24 @@ export default function AppointmentsPage() {
   return (
     <div>
       <PageHeader
-        title="Appointments"
+        title="Appointment Schedule"
         subtitle={`${appointments.length} total appointments`}
         action={
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
-          >
+          <button onClick={() => setOpen(true)} className="btn-primary">
             + Schedule appointment
           </button>
         }
       />
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex animate-fade-up flex-wrap gap-2">
         {['ALL', ...statuses].map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
-              filter === s ? 'bg-teal-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+              filter === s
+                ? 'bg-gradient-to-r from-teal-400 to-cyan-500 text-[#03131a] shadow-[0_0_16px_rgba(45,212,191,0.4)]'
+                : 'border border-white/10 bg-white/[0.03] text-slate-400 hover:border-teal-400/30 hover:text-slate-200'
             }`}
           >
             {s === 'ALL' ? 'All' : s.replace('_', ' ')}
@@ -89,35 +88,44 @@ export default function AppointmentsPage() {
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-gray-500">
+      <div className="fut-table animate-fade-up">
+        <table>
+          <thead>
             <tr>
-              <th className="px-4 py-3 font-medium">Patient</th>
-              <th className="px-4 py-3 font-medium">Doctor</th>
-              <th className="px-4 py-3 font-medium">Date</th>
-              <th className="px-4 py-3 font-medium">Time</th>
-              <th className="px-4 py-3 font-medium">Reason</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
+              <th>Patient</th>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/5">
             {filtered.map((a) => (
-              <tr key={a.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-900">{a.patient.name}</td>
-                <td className="px-4 py-3 text-gray-600">{a.doctor.user.name}</td>
-                <td className="px-4 py-3 text-gray-600">{a.date}</td>
-                <td className="px-4 py-3 text-gray-600">{a.time}</td>
-                <td className="px-4 py-3 text-gray-600">{a.reason || '—'}</td>
-                <td className="px-4 py-3">
+              <tr key={a.id}>
+                <td>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-teal-400/30 to-cyan-400/15 text-xs font-bold text-teal-200">
+                      {a.patient.name.charAt(0)}
+                    </div>
+                    <span className="font-medium text-slate-100">{a.patient.name}</span>
+                  </div>
+                </td>
+                <td>{a.doctor.user.name}</td>
+                <td>
+                  <span className="font-mono text-teal-300/80">{a.date}</span>
+                </td>
+                <td>{a.time}</td>
+                <td>{a.reason || '—'}</td>
+                <td>
                   <StatusBadge status={a.status} />
                 </td>
-                <td className="px-4 py-3">
+                <td>
                   <select
                     value={a.status}
                     onChange={(e) => updateStatus(a.id, e.target.value)}
-                    className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs focus:border-teal-500 focus:outline-none"
+                    className="fut-select"
                   >
                     {statuses.map((s) => (
                       <option key={s} value={s}>
@@ -130,7 +138,7 @@ export default function AppointmentsPage() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={7} className="py-10 text-center text-slate-500">
                   No appointments found.
                 </td>
               </tr>

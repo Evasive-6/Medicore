@@ -39,13 +39,10 @@ export default function PatientsPage() {
   return (
     <div>
       <PageHeader
-        title="Patients"
+        title="Patient Registry"
         subtitle={`${patients.length} registered patients`}
         action={
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
-          >
+          <button onClick={() => setOpen(true)} className="btn-primary">
             + Register patient
           </button>
         }
@@ -55,39 +52,44 @@ export default function PatientsPage() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search patients…"
-        className="mb-4 w-full max-w-sm rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+        className="input mb-4 w-full max-w-sm"
       />
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-gray-500">
+      <div className="fut-table">
+        <table>
+          <thead>
             <tr>
-              <th className="px-4 py-3 font-medium">Patient</th>
-              <th className="px-4 py-3 font-medium">Gender</th>
-              <th className="px-4 py-3 font-medium">Blood</th>
-              <th className="px-4 py-3 font-medium">Phone</th>
-              <th className="px-4 py-3 font-medium">Insurance</th>
-              <th className="px-4 py-3 font-medium">Registered</th>
+              <th>Patient</th>
+              <th>Gender</th>
+              <th>Blood</th>
+              <th>Phone</th>
+              <th>Insurance</th>
+              <th>Registered</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/5">
             {filtered.map((p) => (
-              <tr key={p.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  <Link href={`/patients/${p.id}`} className="font-medium text-teal-700 hover:underline">
-                    {p.name}
-                  </Link>
+              <tr key={p.id}>
+                <td>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-teal-400/30 to-cyan-400/15 text-xs font-bold text-teal-200">
+                      {p.name.charAt(0)}
+                    </div>
+                    <Link href={`/patients/${p.id}`} className="font-medium text-teal-300 transition hover:text-teal-200 hover:underline">
+                      {p.name}
+                    </Link>
+                  </div>
                 </td>
-                <td className="px-4 py-3 capitalize text-gray-600">{p.gender.toLowerCase()}</td>
-                <td className="px-4 py-3 text-gray-600">{p.bloodGroup?.replace('_', ' ') || '—'}</td>
-                <td className="px-4 py-3 text-gray-600">{p.phone}</td>
-                <td className="px-4 py-3 text-gray-600">{p.insurance || '—'}</td>
-                <td className="px-4 py-3 text-gray-500">{new Date(p.createdAt).toLocaleDateString()}</td>
+                <td className="capitalize">{p.gender.toLowerCase()}</td>
+                <td>{p.bloodGroup?.replace('_', ' ') || '—'}</td>
+                <td>{p.phone}</td>
+                <td>{p.insurance || '—'}</td>
+                <td>{new Date(p.createdAt).toLocaleDateString()}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={6} className="py-10 text-center text-slate-500">
                   No patients found.
                 </td>
               </tr>

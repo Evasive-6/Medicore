@@ -32,9 +32,8 @@ export default function PatientForm({ onDone }: { onDone?: () => void }) {
     onDone?.()
   }
 
-  const input =
-    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30'
-  const label = 'mb-1 block text-sm font-medium text-gray-700'
+  const input = 'input'
+  const label = 'input-label'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,21 +91,17 @@ export default function PatientForm({ onDone }: { onDone?: () => void }) {
         </div>
       </div>
 
-      {error && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
+      {error && (
+        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+          {error}
+        </div>
+      )}
 
       <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={onDone}
-          className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-        >
+        <button type="button" onClick={onDone} className="btn-ghost">
           Cancel
         </button>
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
-        >
+        <button type="submit" disabled={saving} className="btn-primary">
           {saving ? 'Saving…' : 'Register patient'}
         </button>
       </div>
