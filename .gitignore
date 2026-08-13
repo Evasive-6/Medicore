@@ -11,6 +11,11 @@ build/
 # Environment variables
 .env
 .env.local
+
+# SQLite database
+*.db
+*.db-journal
+prisma/dev.db
 .env.development.local
 .env.test.local
 .env.production.local

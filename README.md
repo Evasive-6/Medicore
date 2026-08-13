@@ -180,9 +180,8 @@ Real-time insights including:
 
 ## Database
 
-- PostgreSQL
+- SQLite (local development)
 - Prisma ORM
-- Redis Cache
 
 ## Authentication
 
@@ -201,31 +200,40 @@ Real-time insights including:
 
 ```
 
-medicore/
+medi/
 
 ├── app/
-│   ├── dashboard/
-│   ├── patients/
-│   ├── doctors/
-│   ├── appointments/
-│   ├── pharmacy/
-│   ├── laboratory/
-│   └── billing/
+│   ├── (dashboard)/
+│   │   ├── dashboard/
+│   │   ├── patients/
+│   │   ├── doctors/
+│   │   ├── appointments/
+│   │   ├── pharmacy/
+│   │   ├── laboratory/
+│   │   └── billing/
+│   ├── login/
+│   └── api/
+│       ├── auth/[...nextauth]/
+│       ├── patients/
+│       ├── doctors/
+│       ├── appointments/
+│       ├── medicines/
+│       ├── lab/
+│       └── invoices/
 
 ├── components/
 │   ├── ui/
-│   ├── charts/
 │   └── forms/
 
-├── server/
-│   ├── controllers/
-│   ├── services/
-│   └── database/
+├── lib/
+│   ├── auth.ts
+│   └── prisma.ts
 
 ├── prisma/
-│   └── schema.prisma
+│   ├── schema.prisma
+│   └── seed.ts
 
-├── public/
+├── styles/
 
 ├── middleware.ts
 └── README.md
@@ -250,16 +258,16 @@ medicore/
 
 | Module | Status |
 |---|---|
-| Authentication | ✅ |
+| Authentication (NextAuth + roles) | ✅ |
 | Patient Management | ✅ |
-| Doctor Dashboard | ✅ |
+| Doctor Management | ✅ |
 | Appointment System | ✅ |
-| EHR System | ✅ |
+| EHR / Prescriptions | ✅ |
 | Pharmacy | ✅ |
 | Laboratory | ✅ |
 | Billing | ✅ |
-| Analytics | ✅ |
-| AI Healthcare Assistant | 🚧 |
+| Analytics Dashboard | ✅ |
+| AI Healthcare Assistant | 🚧 Planned |
 
 ---
 
@@ -281,29 +289,29 @@ medicore/
 
 # ⚙️ Installation
 
-Clone repository:
+Navigate to the app directory and install dependencies:
 
 ```bash
-git clone https://github.com/username/medicore.git
-````
-
-Install dependencies:
-
-```bash
+cd medi
 npm install
 ```
 
-Setup environment:
+Setup environment (copy the example or create manually):
 
 ```env
-DATABASE_URL=
-NEXTAUTH_SECRET=
-REDIS_URL=
-AWS_ACCESS_KEY=
-AWS_SECRET_KEY=
+DATABASE_URL="file:./dev.db"
+NEXTAUTH_SECRET="change-me-in-production"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
-Run development server:
+Initialize the database and seed sample data:
+
+```bash
+npx prisma migrate dev
+npm run seed
+```
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -315,6 +323,13 @@ Application:
 http://localhost:3000
 ```
 
+Demo accounts (seeded):
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@medicore.dev | admin123 |
+| Doctor | sarah@medicore.dev | admin123 |
+
 ---
 
 # 🧪 Scripts
@@ -325,6 +340,7 @@ http://localhost:3000
 | npm run build          | Production build   |
 | npm run start          | Start production   |
 | npm run lint           | Code quality check |
+| npm run seed           | Seed sample data   |
 | npm run prisma:migrate | Database migration |
 
 ---
