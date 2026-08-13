@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("STAFF") // ADMIN | DOCTOR | STAFF
+  createdAt    DateTime @default(now())
+  doctor       Doctor?
+}
+
+model Doctor {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialization  String
+  phone           String
+  experienceYears Int             @default(0)
+  fee             Float           @default(0)
+  available       Boolean         @default(true)
+  appointments    Appointment[]
+  prescriptions  Prescription[]
+  labOrders       LabOrder[]
+}
+
+model Patient {
+  id             String          @id @default(cuid())
+  name           String
+  email          String?
+  phone          String
+  gender         String          @default("OTHER") // MALE | FEMALE | OTHER
+  dateOfBirth    DateTime?
+  bloodGroup     String? // A_POSITIVE ... O_NEGATIVE
+  address        String?
+  insurance      String?
+  emergencyPhone String?
+  notes          String?
+  createdAt      DateTime        @default(now())
+  appointments   Appointment[]
+  invoices       Invoice[]
+  labOrders      LabOrder[]
+  prescriptions  Prescription[]
+}
+
+model Appointment {
+  id        String        @id @default(cuid())
+  patientId String
+  doctorId  String
+  patient   Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor    Doctor        @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date      String
+  time      String
+  status    String        @default("SCHEDULED") // SCHEDULED | CONFIRMED | COMPLETED | CANCELLED | NO_SHOW
+  reason    String?
+  notes     String?
+  createdAt DateTime      @default(now())
+  invoice   Invoice?
+  prescription Prescription?
+}
+
+model Medicine {
+  id            String              @id @default(cuid())
+  name          String              @unique
+  category      String
+  manufacturer  String?
+  price         Float
+  stock         Int                 @default(0)
+  unit          String              @default("strip")
+  expiryDate    DateTime?
+  createdAt     DateTime            @default(now())
+  prescriptions PrescriptionItem[]
+}
+
+model Prescription {
+  id            String              @id @default(cuid())
+  patientId     String
+  doctorId      String
+  appointmentId String?             @unique
+  patient       Patient             @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor        Doctor              @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  appointment   Appointment?        @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  diagnosis     String?
+  notes         String?
+  createdAt     DateTime            @default(now())
+  items         PrescriptionItem[]
+}
+
+model PrescriptionItem {
+  id             String       @id @default(cuid())
+  prescriptionId String
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  medicineId     String
+  medicine       Medicine     @relation(fields: [medicineId], references: [id])
+  dosage         String
+  frequency      String
+  duration       String?
+}
+
+model LabTest {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  category    String
+  price       Float
+  description String?
+  orders      LabOrder[]
+}
+
+model LabOrder {
+  id        String   @id @default(cuid())
+  patientId String
+  doctorId  String?
+  testId    String
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor    Doctor?  @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  test      LabTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  status    String   @default("PENDING") // PENDING | SAMPLE_COLLECTED | IN_PROGRESS | COMPLETED | CANCELLED
+  result    String?
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id            String       @id @default(cuid())
+  patientId     String
+  appointmentId String?      @unique
+  patient       Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  amount        Float
+  status        String       @default("PENDING") // PAID | PENDING | OVERDUE | REFUNDED
+  items         String
+  createdAt     DateTime     @default(now())
+}
