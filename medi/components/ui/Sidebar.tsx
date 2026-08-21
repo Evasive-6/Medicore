@@ -9,6 +9,7 @@ const navItems = [
   { href: '/patients', label: 'Patients', icon: '👥' },
   { href: '/doctors', label: 'Doctors', icon: '🩺' },
   { href: '/appointments', label: 'Appointments', icon: '📅' },
+  { href: '/prescriptions', label: 'Prescriptions', icon: '📝' },
   { href: '/pharmacy', label: 'Pharmacy', icon: '💊' },
   { href: '/laboratory', label: 'Laboratory', icon: '🧪' },
   { href: '/billing', label: 'Billing', icon: '💳' },
